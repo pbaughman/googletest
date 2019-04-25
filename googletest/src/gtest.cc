@@ -2117,6 +2117,7 @@ static const char* const kReservedTestSuitesAttributes[] = {
   "failures",
   "name",
   "random_seed",
+  "skipped",
   "tests",
   "time",
   "timestamp"
@@ -2129,6 +2130,7 @@ static const char* const kReservedTestSuiteAttributes[] = {
   "errors",
   "failures",
   "name",
+  "skipped",
   "tests",
   "time"
 };
@@ -2725,7 +2727,7 @@ int TestCase::successful_test_count() const {
   return CountIf(test_info_list_, TestPassed);
 }
 
-// Gets the number of successful tests in this test case.
+// Gets the number of skipped tests in this test suite.
 int TestCase::skipped_test_count() const {
   return CountIf(test_info_list_, TestSkipped);
 }
@@ -3812,6 +3814,9 @@ void XmlUnitTestResultPrinter::PrintXmlTestCase(std::ostream* stream,
     OutputXmlAttribute(
         stream, kTestsuite, "disabled",
         StreamableToString(test_case.reportable_disabled_test_count()));
+    OutputXmlAttribute(
+        stream, kTestsuite, "skipped",
+        StreamableToString(test_case.skipped_test_count()));
     OutputXmlAttribute(stream, kTestsuite, "errors", "0");
     OutputXmlAttribute(stream, kTestsuite, "time",
                        FormatTimeInMillisAsSeconds(test_case.elapsed_time()));
@@ -3841,6 +3846,9 @@ void XmlUnitTestResultPrinter::PrintXmlUnitTest(std::ostream* stream,
       stream, kTestsuites, "disabled",
       StreamableToString(unit_test.reportable_disabled_test_count()));
   OutputXmlAttribute(stream, kTestsuites, "errors", "0");
+  OutputXmlAttribute(
+      stream, kTestsuites, "skipped",
+      StreamableToString(unit_test.skipped_test_count()));
   OutputXmlAttribute(
       stream, kTestsuites, "timestamp",
       FormatEpochTimeInMillisAsIso8601(unit_test.start_timestamp()));
